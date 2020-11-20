@@ -9,7 +9,7 @@ int main()
 {
 	printf("Hello SimLab!\n");
 
-	GoLGPUExperiment golExperiment("GPU - 6Game of Life");
+	GoLGPUExperiment golExperiment("GPU - Game of Life");
 	printf("Initializing %s...\n", golExperiment.experimentName.c_str());
 	golExperiment.setParamGridN(1000);
 	golExperiment.setParamStepsN(1000);

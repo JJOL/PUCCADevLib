@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{e69096a1-b606-453b-b59b-84dc8393c664}</ProjectGuid>
-    <RootNamespace>GameOfLife</RootNamespace>
+    <RootNamespace>PUCCADevLib</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>PUCCADevLib</ProjectName>
   </PropertyGroup>
