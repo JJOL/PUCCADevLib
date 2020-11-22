@@ -149,7 +149,6 @@
     <CudaCompile Include="GoL.cu" />
     <CudaCompile Include="GoLCCA.cu" />
     <CudaCompile Include="GoLGPUExperiment.cu" />
-    <CudaCompile Include="neoGol.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CloudSimCA.cuh" />
@@ -161,7 +160,6 @@
     <ClInclude Include="GoLGPUExperiment.cuh" />
     <ClInclude Include="gpuGoLSim.cuh" />
     <ClInclude Include="mat_utils.h" />
-    <ClInclude Include="neoGol.cuh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Cloud_JNI.cpp" />

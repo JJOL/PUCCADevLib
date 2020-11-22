@@ -18,15 +18,15 @@ int main()
 	int dimVarFactor = (int)sqrt(amountOfVariablesPerCell);
 	GoLGPUExperiment golExperiment("GPU - Game of Life");
 	printf("Initializing %s...\n", golExperiment.experimentName.c_str());
-	golExperiment.setParamGridN(dimVarFactor*1000);
-	golExperiment.setParamStepsN(1000);
+	golExperiment.setParamGridN(dimVarFactor*10);
+	golExperiment.setParamStepsN(1);
 	golExperiment.setParamThreads(16);
 	golExperiment.setParamBlocks(128);
 	golExperiment.initialize();
 	golExperiment.runExperimentInstance();
 
 
-	GoLCPUExperiment golCpuExperiment("CPU - Game of Life");
+	/*GoLCPUExperiment golCpuExperiment("CPU - Game of Life");
 	printf("Initializing %s...\n", golCpuExperiment.experimentName.c_str());
 	golCpuExperiment.setParamGridN(dimVarFactor * 1000);
 	golCpuExperiment.setParamStepsN(1000);
@@ -34,7 +34,7 @@ int main()
 	golCpuExperiment.runExperimentInstance();
 
 	golCpuExperiment.printResults();
-	golExperiment.printResults();
+	golExperiment.printResults();*/
 
 	// Trying CA
 

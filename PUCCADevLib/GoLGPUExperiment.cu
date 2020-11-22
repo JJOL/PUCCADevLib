@@ -32,13 +32,24 @@ void GoLGPUExperiment::initialize()
 	initMat(h_golFinalMat, grid_n, 0);
 	initMat(h_golExtMat, CONV_N, 0);
 	initMooreKernel(h_golKernel);
+
+	printf("GPU Init Mat\n");
+	printMat(h_golMat, grid_n);
 }
 
 void GoLGPUExperiment::runExperimentInstance()
 {
+	GoLCA::hCAInit(h_golExtMat, h_golKernel, h_golFinalMat, grid_n, blocks_n, threads_n);
+	
+	GoLCA::hCAReady();
 	t1 = clock();
-	gpuPlayGoL(h_golExtMat, h_golKernel, h_golFinalMat, grid_n, steps_n, blocks_n, threads_n);
+	for (int t = 0; t < steps_n; t++)
+		GoLCA::hCAStep(t);
+	GoLCA::hCADone();
 	t2 = clock();
+
+	printf("GPU Final Mat\n");
+	printMat(h_golFinalMat, grid_n);
 
 	free(h_golMat);
 	free(h_golExtMat);

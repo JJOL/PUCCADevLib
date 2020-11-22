@@ -54,9 +54,6 @@
     <ClInclude Include="GoLCCA.cuh">
       <Filter>Source Files\GoL</Filter>
     </ClInclude>
-    <ClInclude Include="neoGol.cuh">
-      <Filter>Source Files\PoC</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="GoLCCA.cu">
@@ -70,9 +67,6 @@
     </CudaCompile>
     <CudaCompile Include="CloudSimCA.cu">
       <Filter>Source Files\CloudSim</Filter>
-    </CudaCompile>
-    <CudaCompile Include="neoGol.cu">
-      <Filter>Source Files\PoC</Filter>
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
