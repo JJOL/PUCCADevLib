@@ -2,8 +2,8 @@
 #include <string>
 #include "CUDAExperiment.h"
 #include "GoLGPUExperiment.cuh"
-#include "GoLCPUExperiment.h"
-#include "GoLCCA.cuh"
+//#include "GoLCPUExperiment.h"
+//#include "GoLCCA.cuh"
 #include "mat_utils.h"
 #include <typeinfo>
 
@@ -22,6 +22,7 @@ int main()
 	golExperiment.setParamStepsN(1);
 	golExperiment.setParamThreads(16);
 	golExperiment.setParamBlocks(128);
+	golExperiment.setPrintEveryStep(0);
 	golExperiment.initialize();
 	golExperiment.runExperimentInstance();
 
@@ -38,41 +39,41 @@ int main()
 
 	// Trying CA
 
-	ExecutionEnv envs[] = { ENV_CPU, ENV_GPU };
-	for (int i =0; i < 2; i++)
-	{
-		GoLCCA gol(4000);
-		gol.setThreadsN(32);
-		gol.init(envs[i]);
+	//ExecutionEnv envs[] = { ENV_CPU, ENV_GPU };
+	//for (int i =0; i < 2; i++)
+	//{
+	//	GoLCCA gol(4000);
+	//	gol.setThreadsN(32);
+	//	gol.init(envs[i]);
 
-		printf("Beginning new GoLCA!\n");
+	//	printf("Beginning new GoLCA!\n");
 
-		GoLGlobals global = gol.caGlobal;
+	//	GoLGlobals global = gol.caGlobal;
 
-		GoLCell* state = (GoLCell*)gol.getState();
-		state[global.f2dTo1d(4, 4)].state = 1;
-		state[global.f2dTo1d(4, 5)].state = 1;
-		state[global.f2dTo1d(4, 6)].state = 1;
+	//	GoLCell* state = (GoLCell*)gol.getState();
+	//	state[global.f2dTo1d(4, 4)].state = 1;
+	//	state[global.f2dTo1d(4, 5)].state = 1;
+	//	state[global.f2dTo1d(4, 6)].state = 1;
 
-		gol.prepare();
+	//	gol.prepare();
 
-		int* golMatState = gol.getStateIntMat();
-		/*printf("Before State:\n");
-		printMat(golMatState, gol.caGlobal.gridN);*/
+	//	int* golMatState = gol.getStateIntMat();
+	//	/*printf("Before State:\n");
+	//	printMat(golMatState, gol.caGlobal.gridN);*/
 
-		clock_t t1, t2;
-		t1 = clock();		
-		for (int i = 0; i < 20; i++) {
-			gol.step();
-			printf("Step (%d)\n", i);
-			/*printf("After State:\n");
-			golMatState = gol.getStateIntMat();
-			printMat(golMatState, gol.caGlobal.gridN);*/
-		}
-		t2 = clock();
-		float time = (double)(t2 - t1) / CLOCKS_PER_SEC;
-		printf("Time: %lf\n", time);
-	}
+	//	clock_t t1, t2;
+	//	t1 = clock();		
+	//	for (int i = 0; i < 20; i++) {
+	//		gol.step();
+	//		printf("Step (%d)\n", i);
+	//		/*printf("After State:\n");
+	//		golMatState = gol.getStateIntMat();
+	//		printMat(golMatState, gol.caGlobal.gridN);*/
+	//	}
+	//	t2 = clock();
+	//	float time = (double)(t2 - t1) / CLOCKS_PER_SEC;
+	//	printf("Time: %lf\n", time);
+	//}
 
 	printf("Finished Execution!\n");
 

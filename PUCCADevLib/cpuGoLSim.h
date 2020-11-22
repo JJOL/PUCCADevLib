@@ -34,7 +34,7 @@ void cpuPlayGoL(int* initGolMat, int* golKernel, int* golFinalMat, int n, int nS
 	int CONV_N = n + 2;
 	int* cpyConvMat;
 	cpyConvMat = (int*)malloc(CONV_N * CONV_N * sizeof(int));
-	initMat(cpyConvMat, CONV_N, 0);
+	PUCCA::initMat(cpyConvMat, CONV_N, 0);
 
 
 

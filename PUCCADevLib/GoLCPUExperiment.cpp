@@ -20,13 +20,13 @@ void GoLCPUExperiment::initialize()
 		exit(-1);
 	}
 
-	initMat(h_golMat, grid_n, 0);
+	PUCCA::initMat(h_golMat, grid_n, 0);
 	h_golMat[3 + 4 * grid_n] = 1;
 	h_golMat[4 + 4 * grid_n] = 1;
 	h_golMat[5 + 4 * grid_n] = 1;
-	initMat(h_golFinalMat, grid_n, 0);
-	initMat(h_golExtMat, CONV_N, 0);
-	initMooreKernel(h_golKernel);
+	PUCCA::initMat(h_golFinalMat, grid_n, 0);
+	PUCCA::initMat(h_golExtMat, CONV_N, 0);
+	PUCCA::initMooreKernel(h_golKernel);
 }
 
 void GoLCPUExperiment::runExperimentInstance()
@@ -34,7 +34,7 @@ void GoLCPUExperiment::runExperimentInstance()
 	int CONV_N = grid_n + 2;
 
 	t1 = clock();
-	copyMatIntoMat(h_golMat, h_golExtMat, grid_n, CONV_N, 0, 0, 1, 1);
+	PUCCA::copyMatIntoMat(h_golMat, h_golExtMat, grid_n, CONV_N, 0, 0, 1, 1);
 	cpuPlayGoL(h_golExtMat, h_golKernel, h_golFinalMat, grid_n, steps_n);
 	//printMat(h_golFinalMat, N);
 	t2 = clock();

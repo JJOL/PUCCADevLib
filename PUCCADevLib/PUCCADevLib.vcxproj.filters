@@ -33,12 +33,6 @@
     <ClInclude Include="CUDAExperiment.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="gpuGoLSim.cuh">
-      <Filter>Source Files\PoC</Filter>
-    </ClInclude>
-    <ClInclude Include="GoLGPUExperiment.cuh">
-      <Filter>Source Files\PoC</Filter>
-    </ClInclude>
     <ClInclude Include="GoLCPUExperiment.h">
       <Filter>Source Files\PoC</Filter>
     </ClInclude>
@@ -54,6 +48,15 @@
     <ClInclude Include="GoLCCA.cuh">
       <Filter>Source Files\GoL</Filter>
     </ClInclude>
+    <ClInclude Include="puccaGoL.cuh">
+      <Filter>Source Files\PoC</Filter>
+    </ClInclude>
+    <ClInclude Include="GoLGPUExperiment.cuh">
+      <Filter>Source Files\PoC</Filter>
+    </ClInclude>
+    <ClInclude Include="puccaEmptyCATemplate.cuh">
+      <Filter>Source Files\PoC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="GoLCCA.cu">
@@ -67,6 +70,9 @@
     </CudaCompile>
     <CudaCompile Include="CloudSimCA.cu">
       <Filter>Source Files\CloudSim</Filter>
+    </CudaCompile>
+    <CudaCompile Include="puccaCloudSim.cuh">
+      <Filter>Source Files\PoC</Filter>
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>

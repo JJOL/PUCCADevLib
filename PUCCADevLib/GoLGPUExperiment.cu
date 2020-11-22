@@ -3,12 +3,14 @@
 #include <stdlib.h>
 #include <time.h>
 #include "mat_utils.h"
-#include "gpuGoLSim.cuh"
+#include "puccaGoL.cuh"
+#include "puccaGoL.cuh"
 
 void GoLGPUExperiment::setParamGridN(int gridN) { grid_n = gridN; }
 void GoLGPUExperiment::setParamStepsN(int stepsN) { steps_n = stepsN; }
 void GoLGPUExperiment::setParamThreads(int threadsN) { threads_n = threadsN; }
 void GoLGPUExperiment::setParamBlocks(int blocksN) { blocks_n = blocksN; }
+void GoLGPUExperiment::setPrintEveryStep(bool flag) { printEveryStep = flag; }
 
 void GoLGPUExperiment::initialize()
 {
@@ -25,31 +27,41 @@ void GoLGPUExperiment::initialize()
 		exit(-1);
 	}
 
-	initMat(h_golMat, grid_n, 0);
+	PUCCA::initMat(h_golMat, grid_n, 0);
 	h_golMat[3 + 4 * grid_n] = 1;
 	h_golMat[4 + 4 * grid_n] = 1;
 	h_golMat[5 + 4 * grid_n] = 1;
-	initMat(h_golFinalMat, grid_n, 0);
-	initMat(h_golExtMat, CONV_N, 0);
-	initMooreKernel(h_golKernel);
-
-	printf("GPU Init Mat\n");
-	printMat(h_golMat, grid_n);
+	PUCCA::initMat(h_golFinalMat, grid_n, 0);
+	PUCCA::initMat(h_golExtMat, CONV_N, 0);
+	PUCCA::initMooreKernel(h_golKernel);
+	
+	if (grid_n <= 10) {
+		printf("GPU Init Mat\n");
+		PUCCA::printMat(h_golMat, grid_n);
+	}
 }
 
 void GoLGPUExperiment::runExperimentInstance()
 {
 	GoLCA::hCAInit(h_golExtMat, h_golKernel, h_golFinalMat, grid_n, blocks_n, threads_n);
-	
+	PUCCA::copyMatIntoMat(h_golMat, h_golExtMat, grid_n, grid_n+2, 0, 0, 1, 1);
 	GoLCA::hCAReady();
 	t1 = clock();
-	for (int t = 0; t < steps_n; t++)
+	for (int t = 0; t < steps_n; t++) {
 		GoLCA::hCAStep(t);
+		GoLCA::hCARead();
+		if (printEveryStep && grid_n <= 10) {
+			printf("Iteration Mat:\n");
+			PUCCA::printMat(h_golFinalMat, grid_n);
+		}
+	}
 	GoLCA::hCADone();
 	t2 = clock();
 
-	printf("GPU Final Mat\n");
-	printMat(h_golFinalMat, grid_n);
+	if (grid_n <= 10) {
+		printf("GPU Final Mat\n");
+		PUCCA::printMat(h_golFinalMat, grid_n);
+	}
 
 	free(h_golMat);
 	free(h_golExtMat);

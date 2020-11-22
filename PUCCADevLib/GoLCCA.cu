@@ -36,10 +36,10 @@ void GoLCCA::cpuInit()
 	dataInit(size);
 	
 	caGlobal.neighborsKernel = (int*)malloc(3 * 3 * sizeof(int));
-	initMooreKernel(caGlobal.neighborsKernel);
+	PUCCA::initMooreKernel(caGlobal.neighborsKernel);
 
 	m_data = (int*)malloc(size * sizeof(int));
-	initMat(m_data, caGlobal.gridN, 0);
+	PUCCA::initMat(m_data, caGlobal.gridN, 0);
 }
 
 void GoLCCA::gpuInit()

@@ -149,6 +149,7 @@
     <CudaCompile Include="GoL.cu" />
     <CudaCompile Include="GoLCCA.cu" />
     <CudaCompile Include="GoLGPUExperiment.cu" />
+    <CudaCompile Include="puccaCloudSim.cuh" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CloudSimCA.cuh" />
@@ -158,7 +159,8 @@
     <ClInclude Include="GoLCCA.cuh" />
     <ClInclude Include="GoLCPUExperiment.h" />
     <ClInclude Include="GoLGPUExperiment.cuh" />
-    <ClInclude Include="gpuGoLSim.cuh" />
+    <ClInclude Include="puccaEmptyCATemplate.cuh" />
+    <ClInclude Include="puccaGoL.cuh" />
     <ClInclude Include="mat_utils.h" />
   </ItemGroup>
   <ItemGroup>
