@@ -37,7 +37,7 @@ int main()
 	ExecutionEnv envs[] = { ENV_CPU, ENV_GPU };
 	for (int i =0; i < 2; i++)
 	{
-		GoLCCA gol(10);
+		GoLCCA gol(4000);
 		gol.init(envs[i]);
 
 		GoLGlobals global = gol.caGlobal;
@@ -51,14 +51,14 @@ int main()
 
 		int* golMatState = gol.getStateIntMat();
 		printf("Before State:\n");
-		printMat(golMatState, gol.caGlobal.gridN);
+		//printMat(golMatState, gol.caGlobal.gridN);
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 10; i++) {
 			gol.step();
 
 			printf("After State:\n");
-			golMatState = gol.getStateIntMat();
-			printMat(golMatState, gol.caGlobal.gridN);
+			//golMatState = gol.getStateIntMat();
+			//printMat(golMatState, gol.caGlobal.gridN);
 		}
 	}
 
