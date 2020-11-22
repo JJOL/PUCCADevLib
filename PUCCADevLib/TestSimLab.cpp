@@ -34,27 +34,32 @@ int main()
 	golExperiment.printResults();*/
 
 	// Trying CA
-	GoLCCA gol(10);
+	ExecutionEnv envs[] = { ENV_CPU, ENV_GPU };
+	for (int i =0; i < 2; i++)
+	{
+		GoLCCA gol(10);
+		gol.init(envs[i]);
 
-	gol.init(ENV_GPU);
+		GoLGlobals global = gol.caGlobal;
 
-	GoLCell* state = (GoLCell *)gol.getState();
-	state[gol.f2dTo1d(4, 4)].state = 1;
-	state[gol.f2dTo1d(4, 5)].state = 1;
-	state[gol.f2dTo1d(4, 6)].state = 1;
+		GoLCell* state = (GoLCell*)gol.getState();
+		state[global.f2dTo1d(4, 4)].state = 1;
+		state[global.f2dTo1d(4, 5)].state = 1;
+		state[global.f2dTo1d(4, 6)].state = 1;
 
-	gol.prepare();
+		gol.prepare();
 
-	int* golMatState = gol.getStateIntMat();
-	printf("Before State:\n");
-	printMat(golMatState, gol.m_gridN);
+		int* golMatState = gol.getStateIntMat();
+		printf("Before State:\n");
+		printMat(golMatState, gol.caGlobal.gridN);
 
-	for (int i = 0; i < 1; i++) {
-		gol.step();
+		for (int i = 0; i < 4; i++) {
+			gol.step();
 
-		printf("After State:\n");
-		golMatState = gol.getStateIntMat();
-		printMat(golMatState, gol.m_gridN);
+			printf("After State:\n");
+			golMatState = gol.getStateIntMat();
+			printMat(golMatState, gol.caGlobal.gridN);
+		}
 	}
 
 

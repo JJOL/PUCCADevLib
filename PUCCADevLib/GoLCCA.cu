@@ -10,7 +10,9 @@ void deviceClean(void* address) { if (address != NULL) cudaFree(address); }
 GoLCCA::GoLCCA(int gridN) : m_gridN(gridN)
 {
 	env = ENV_UNSPECIFIED;
+	caGlobal.gridN = gridN;
 	// Init to NULL to be able to skip them during cleaning if we have no data
+	caGlobal.neighborsKernel = NULL;
 	m_nextData = NULL;
 	dev_prevData = NULL;
 	dev_nextData = NULL;
@@ -29,24 +31,21 @@ void GoLCCA::init(ExecutionEnv _env)
 	m_data = (int*)malloc(size * sizeof(int));
 	initMat(m_data, m_gridN, 0);
 
-	// Settup 
+	// Setup 
 	int x, y;
 	m_prevData = new GoLCell[size];
 	for (x = 0; x < m_gridN; x++) {
 		for (y = 0; y < m_gridN; y++) {
-			m_prevData[f2dTo1d(x, y)].x = x;
-			m_prevData[f2dTo1d(x, y)].y = y;
+			m_prevData[caGlobal.f2dTo1d(x, y)].x = x;
+			m_prevData[caGlobal.f2dTo1d(x, y)].y = y;
 		}
 	}
 		
-	//copyMatIntoMat(m_data, m_prevData, m_gridN, m_gridN, 0, 0, 0, 0);
 	m_nextData = new GoLCell[size];
 	
-	//initMat(m_nextData, m_gridN, 0);
-	
-
-	m_kernel = (int*)malloc(3 * 3 * sizeof(int));
-	initMooreKernel(m_kernel);
+	// Only GoL data
+	caGlobal.neighborsKernel = (int*)malloc(3 * 3 * sizeof(int));
+	initMooreKernel(caGlobal.neighborsKernel);
 
 	if (env == ENV_GPU) {
 		// Creating memory pointers for state on device
@@ -57,35 +56,29 @@ void GoLCCA::init(ExecutionEnv _env)
 		cudaMemcpy(dev_nextData, m_nextData, size * sizeof(GoLCell), cudaMemcpyHostToDevice);
 
 		// Setting Up Common GoL device auxilary data
-		GoLCCA cpyCA(m_gridN);
-		// Copying m_grid and kernel into device memory
-		cudaMalloc((void**)&dev_ca, sizeof(GoLCCA));
-		cudaMalloc((void**)&cpyCA.m_kernel, 3 * 3 * sizeof(int));
-		cudaMemcpy(cpyCA.m_kernel, m_kernel, 3 * 3 * sizeof(int), cudaMemcpyHostToDevice);
-		cudaMemcpy(dev_ca, &cpyCA, sizeof(GoLCCA), cudaMemcpyHostToDevice);
+		GoLGlobals cpyGlobals;
+		cpyGlobals.gridN = caGlobal.gridN;
+		cudaMalloc((void**)&cpyGlobals.neighborsKernel, 3 * 3 * sizeof(int));
+		cudaMalloc((void**)&dev_caGlobals, sizeof(GoLGlobals));
+		cudaMemcpy(cpyGlobals.neighborsKernel, caGlobal.neighborsKernel, 3 * 3 * sizeof(int), cudaMemcpyHostToDevice);
+		cudaMemcpy(dev_caGlobals, &cpyGlobals, sizeof(GoLGlobals), cudaMemcpyHostToDevice);
 	}
 }
 
 GoLCCA::~GoLCCA()
 {
-	printf("Freeing m_kernel\n");
-	if (m_prevData != NULL)
-		hostClean(m_kernel);
-	printf("Freeing m_data\n");
+	hostClean(caGlobal.neighborsKernel);
 	hostClean(m_data);
-	printf("Freeing m_prevData\n");
 	hostClean(m_prevData);
-	printf("Freeing m_nextData\n");
 	hostClean(m_nextData);
 
 	if (env == ENV_GPU) {
-		printf("Cleaning GPU memory!\n");
 		deviceClean(dev_prevData);
 		deviceClean(dev_nextData);
-		GoLCCA cpyCCA(0);
-		cudaMemcpy(&cpyCCA, dev_ca, sizeof(GoLCCA), cudaMemcpyDeviceToHost);
-		deviceClean(cpyCCA.m_kernel);
-		deviceClean(dev_ca);
+		GoLGlobals cpyDevGlobals;
+		cudaMemcpy(&cpyDevGlobals, dev_caGlobals, sizeof(GoLGlobals), cudaMemcpyDeviceToHost);
+		deviceClean(cpyDevGlobals.neighborsKernel);
+		deviceClean(dev_caGlobals);
 	}
 }
 
@@ -123,7 +116,7 @@ void GoLCCA::cpuStep()
 	GoLCell* temp;
 	for (int y = 1; y < m_gridN - 1; y++) {
 		for (int x = 1; x < m_gridN - 1; x++) {
-			m_nextData[f2dTo1d(x, y)].update(this, m_prevData);
+			m_nextData[caGlobal.f2dTo1d(x, y)].update(&caGlobal, m_prevData);
 		}
 	}
 
@@ -132,7 +125,7 @@ void GoLCCA::cpuStep()
 	m_nextData = temp;
 }
 
-__global__ void kGoLStep(GoLCCA* ca, GoLCell* oldCAData, GoLCell* newCAData, int n)
+__global__ void kGoLStep(GoLGlobals* ca, GoLCell* oldCAData, GoLCell* newCAData, int n)
 {
 	int tid = threadIdx.x + blockIdx.x * blockDim.x;
 
@@ -142,12 +135,18 @@ __global__ void kGoLStep(GoLCCA* ca, GoLCell* oldCAData, GoLCell* newCAData, int
 	}
 
 }
+
 void GoLCCA::gpuStep()
 {
 	int size = m_gridN * m_gridN;
 
 	GoLCell* dev_temp;
-	kGoLStep <<<(size + size - 1) / 32, 32>> > (dev_ca, dev_prevData, dev_nextData, size);
+
+	if (dev_caGlobals == NULL) {
+		fprintf(stderr, "ERROR: GoL dev_caGlobals is empty!\n");
+		return;
+	}
+	kGoLStep <<<(size + size - 1) / 32, 32>> > (dev_caGlobals, dev_prevData, dev_nextData, size);
 	cudaDeviceSynchronize();
 	dev_temp = dev_prevData;
 	dev_prevData = dev_nextData;
@@ -156,29 +155,30 @@ void GoLCCA::gpuStep()
 	cudaMemcpy(m_prevData, dev_prevData, size * sizeof(GoLCell), cudaMemcpyDeviceToHost);
 }
 
-__host__ __device__ void GoLCCA::f1dTo2d(int index, int* x, int* y)
-{
-	*x = index % m_gridN;
-	*y = index / m_gridN;
-}
 
-__forceinline__ __host__ __device__ int GoLCCA::f2dTo1d(int x, int y)
-{
-	return x + y * m_gridN;
-}
 
+__host__ __device__ void GoLGlobals::f1dTo2d(int index, int* x, int* y)
+{
+	*x = index % gridN;
+	*y = index / gridN;
+}
+ __forceinline__ __host__ __device__ int GoLGlobals::f2dTo1d(int x, int y)
+{
+	return x + y * gridN;
+}
 
 
 
 /* GoL Closest Logic at Cell Level */
-__host__ __device__ void GoLCell::update(GoLCCA* ca, GoLCell* prevCAData)
+__host__ __device__ void GoLCell::update(GoLGlobals* ca, GoLCell* prevCAData)
 {
 	int aliveNeighbors = 0;
 
 	for (int k_row = 0; k_row < 3; k_row++) {
 		for (int k_col = 0; k_col < 3; k_col++) {
 			aliveNeighbors +=
-				ca->m_kernel[k_col + (k_row * 3)] * prevCAData[ca->f2dTo1d(x - 1 + k_col, y - 1 + k_row)].state;
+				ca->neighborsKernel
+				[k_col + (k_row * 3)] * prevCAData[ca->f2dTo1d(x - 1 + k_col, y - 1 + k_row)].state;
 		}
 	}
 
