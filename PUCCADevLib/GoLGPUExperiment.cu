@@ -4,7 +4,6 @@
 #include <time.h>
 #include "mat_utils.h"
 #include "puccaGoL.cuh"
-#include "puccaGoL.cuh"
 
 void GoLGPUExperiment::setParamGridN(int gridN) { grid_n = gridN; }
 void GoLGPUExperiment::setParamStepsN(int stepsN) { steps_n = stepsN; }

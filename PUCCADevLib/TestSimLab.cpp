@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <string>
-#include "CUDAExperiment.h"
+//#include "CUDAExperiment.h"
 #include "GoLGPUExperiment.cuh"
 //#include "GoLCPUExperiment.h"
 //#include "GoLCCA.cuh"
 #include "mat_utils.h"
-#include <typeinfo>
 
 
 
