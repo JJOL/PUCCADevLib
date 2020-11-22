@@ -34,7 +34,7 @@ void GoLCPUExperiment::runExperimentInstance()
 	int CONV_N = grid_n + 2;
 
 	t1 = clock();
-	copyMatIntoMat(h_golMat, h_golExtMat, grid_n, CONV_N, 1, 1);
+	copyMatIntoMat(h_golMat, h_golExtMat, grid_n, CONV_N, 0, 0, 1, 1);
 	cpuPlayGoL(h_golExtMat, h_golKernel, h_golFinalMat, grid_n, steps_n);
 	//printMat(h_golFinalMat, N);
 	t2 = clock();

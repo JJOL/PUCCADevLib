@@ -17,11 +17,11 @@ void initMooreKernel(int* kernel)
 }
 
 
-void copyMatIntoMat(int* srcMat, int* destMat, int srcN, int destN, int xoff, int yoff)
+void copyMatIntoMat(int* srcMat, int* destMat, int srcN, int destN, int srcXoff, int srcYoff, int destXoff, int destYoff)
 {
 	for (int i = 0; i < srcN; i++) {
 		for (int j = 0; j < srcN; j++) {
-			destMat[(xoff + j) + (yoff + i) * destN] = srcMat[j + i * srcN];
+			destMat[(destXoff + j) + (destYoff + i) * destN] = srcMat[j + i * srcN];
 		}
 	}
 }

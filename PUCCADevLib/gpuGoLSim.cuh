@@ -5,14 +5,6 @@
 #include "device_launch_parameters.h"
 #include "mat_utils.h"
 
-class TestClass
-{
-public:
-	int n;
-	__device__ TestClass(int _n) : n(_n) {}
-	__device__ void add(int x) { n += x; }
-};
-
 __device__ void golConvolution(int col, int row, int* d_kernel, int k_size, int* prevMat, int convN, int* newMat, int n)
 {
 	int conv_index = (col + 1) + (row + 1) * convN;
@@ -29,8 +21,6 @@ __device__ void golConvolution(int col, int row, int* d_kernel, int k_size, int*
 	aliveNeighbors += d_kernel[1 + (2 * k_size)] * prevMat[(col + 1) + (row + 2) * convN];
 	aliveNeighbors += d_kernel[2 + (2 * k_size)] * prevMat[(col + 2) + (row + 2) * convN];
 
-	TestClass v(1);
-	v.add(2);
 
 	/*for (int k_row = 0; k_row < k_size; k_row++) {
 		for (int k_col = 0; k_col < k_size; k_col++) {
@@ -48,7 +38,7 @@ __device__ void golConvolution(int col, int row, int* d_kernel, int k_size, int*
 		if (aliveNeighbors == 2 || aliveNeighbors == 3) cellValue = 1;
 		else cellValue = 0;
 	}*/
-	cellValue = (1 - cellValue) * (aliveNeighbors == v.n) + (cellValue) * (aliveNeighbors == 2 || aliveNeighbors == 3);
+	cellValue = (1 - cellValue) * (aliveNeighbors == 3) + (cellValue) * (aliveNeighbors == 2 || aliveNeighbors == 3);
 	newMat[conv_index] = cellValue;
 }
 
