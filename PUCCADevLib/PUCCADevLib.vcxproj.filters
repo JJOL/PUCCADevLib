@@ -33,12 +33,6 @@
     <ClInclude Include="CUDAExperiment.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="CUDACA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GoLCCA.cuh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="gpuGoLSim.cuh">
       <Filter>Source Files\PoC</Filter>
     </ClInclude>
@@ -49,6 +43,18 @@
       <Filter>Source Files\PoC</Filter>
     </ClInclude>
     <ClInclude Include="cpuGoLSim.h">
+      <Filter>Source Files\PoC</Filter>
+    </ClInclude>
+    <ClInclude Include="CloudSimCA.cuh">
+      <Filter>Source Files\CloudSim</Filter>
+    </ClInclude>
+    <ClInclude Include="CUDACA.cuh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GoLCCA.cuh">
+      <Filter>Source Files\GoL</Filter>
+    </ClInclude>
+    <ClInclude Include="neoGol.cuh">
       <Filter>Source Files\PoC</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,6 +68,12 @@
     <CudaCompile Include="GoL.cu">
       <Filter>Source Files\PoC</Filter>
     </CudaCompile>
+    <CudaCompile Include="CloudSimCA.cu">
+      <Filter>Source Files\CloudSim</Filter>
+    </CudaCompile>
+    <CudaCompile Include="neoGol.cu">
+      <Filter>Source Files\PoC</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestSimLab.cpp">
@@ -73,11 +85,11 @@
     <ClCompile Include="mat_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CUDACA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GoLCPUExperiment.cpp">
       <Filter>Source Files\PoC</Filter>
+    </ClCompile>
+    <ClCompile Include="CUDACA.cu">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

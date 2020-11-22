@@ -4,10 +4,66 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include "mat_utils.h"
+#include "neoGol.cuh"
+
+class MUtil
+{
+public:
+	int m;
+	__host__ __device__ MUtil() {}
+	__host__ __device__ int conv2dto1d(int x, int y) {
+		return x + y*m;
+	}
+};
+
+class ExternalDeviceCall
+{
+	__device__ void golConvolution(int col, int row, int* d_kernel, int k_size, int* prevMat, int convN, int* newMat, int n)
+	{
+		//MUtil util;
+		int conv_index = (col + 1) + (row + 1) * convN;
+		//util->conv2dto1d(col + 1, row + 1);
+
+		int aliveNeighbors = 0;
+
+		aliveNeighbors += d_kernel[0 + (0 * k_size)] * prevMat[(col + 0) + (row + 0) * convN];
+		aliveNeighbors += d_kernel[1 + (0 * k_size)] * prevMat[(col + 1) + (row + 0) * convN];
+		aliveNeighbors += d_kernel[2 + (0 * k_size)] * prevMat[(col + 2) + (row + 0) * convN];
+		aliveNeighbors += d_kernel[0 + (1 * k_size)] * prevMat[(col + 0) + (row + 1) * convN];
+		aliveNeighbors += d_kernel[1 + (1 * k_size)] * prevMat[(col + 1) + (row + 1) * convN];
+		aliveNeighbors += d_kernel[2 + (1 * k_size)] * prevMat[(col + 2) + (row + 1) * convN];
+		aliveNeighbors += d_kernel[0 + (2 * k_size)] * prevMat[(col + 0) + (row + 2) * convN];
+		aliveNeighbors += d_kernel[1 + (2 * k_size)] * prevMat[(col + 1) + (row + 2) * convN];
+		aliveNeighbors += d_kernel[2 + (2 * k_size)] * prevMat[(col + 2) + (row + 2) * convN];
+
+
+		/*for (int k_row = 0; k_row < k_size; k_row++) {
+			for (int k_col = 0; k_col < k_size; k_col++) {
+				aliveNeighbors +=
+					d_kernel[k_col + (k_row * k_size)] * prevMat[(col + k_col) + (row + k_row) * convN];
+			}
+		}*/
+
+		int cellValue = prevMat[conv_index];
+		/*if (cellValue == 0) {
+			if (aliveNeighbors == 3) cellValue = 1;
+			else cellValue = 0;
+		}
+		else {
+			if (aliveNeighbors == 2 || aliveNeighbors == 3) cellValue = 1;
+			else cellValue = 0;
+		}*/
+		cellValue = (1 - cellValue) * (aliveNeighbors == 3) + (cellValue) * (aliveNeighbors == 2 || aliveNeighbors == 3);
+		newMat[conv_index] = cellValue;
+	}
+};
+
 
 __device__ void golConvolution(int col, int row, int* d_kernel, int k_size, int* prevMat, int convN, int* newMat, int n)
 {
+	//MUtil util;
 	int conv_index = (col + 1) + (row + 1) * convN;
+	//util->conv2dto1d(col + 1, row + 1);
 
 	int aliveNeighbors = 0;
 
@@ -42,6 +98,11 @@ __device__ void golConvolution(int col, int row, int* d_kernel, int k_size, int*
 	newMat[conv_index] = cellValue;
 }
 
+//__forceinline__ __device__ void updateCall(int col, int row, int* d_kernel, int k_size, int* prevMat, int convN, int* newMat, int n)
+//{
+//	golConvolution(col, row, d_kernel, k_size, prevMat, convN, newMat, n);
+//}
+
 __global__ void kCalcGoLIteration(int* prevConvMat, int* newConvMat, int* kernel, int n, int nConv)
 {
 	int col_b = threadIdx.x + blockIdx.x * blockDim.x;
@@ -51,7 +112,8 @@ __global__ void kCalcGoLIteration(int* prevConvMat, int* newConvMat, int* kernel
 
 	while (col < n) {
 		while (row < n) {
-			golConvolution(col, row, kernel, 3, prevConvMat, nConv, newConvMat, n);
+			updateCall(col, row, kernel, 3, prevConvMat, nConv, newConvMat, n);
+			//golConvolution(col, row, kernel, 3, prevConvMat, nConv, newConvMat, n);
 			row += blockDim.y * gridDim.y;
 		}
 		row = row_b;
@@ -59,9 +121,12 @@ __global__ void kCalcGoLIteration(int* prevConvMat, int* newConvMat, int* kernel
 	}
 
 	if (row < n && col < n) {
+		//updateCall(col, row, kernel, 3, prevConvMat, nConv, newConvMat, n);
 		golConvolution(col, row, kernel, 3, prevConvMat, nConv, newConvMat, n);
 	}
 }
+
+void (*kFunc)(int*, int*, int*, int, int) = &kCalcGoLIteration;
 
 void gpuPlayGoL(int* initGolMat, int* golKernel, int* golFinalMat, int n, int nSteps,  int nBlocks, int nThreads)
 {
@@ -87,7 +152,6 @@ void gpuPlayGoL(int* initGolMat, int* golKernel, int* golFinalMat, int n, int nS
 	cudaMemPrefetchAsync(d_prevMat, CONV_N * CONV_N * sizeof(int), device, NULL);
 	cudaMemPrefetchAsync(d_newMat, CONV_N * CONV_N * sizeof(int), device, NULL);
 	cudaMemPrefetchAsync(d_golKernel, 3 * 3 * sizeof(int), device, NULL);*/
-	
 
 	cudaFuncSetCacheConfig(kCalcGoLIteration, cudaFuncCachePreferL1);
 
@@ -95,7 +159,13 @@ void gpuPlayGoL(int* initGolMat, int* golKernel, int* golFinalMat, int n, int nS
 	for (int t = 0; t < nSteps; t++) {
 		if (t % 1 == 0) printf("Iteracion #%d\n", t);
 		kCalcGoLIteration << <dim3(nBlocks, nBlocks), dim3(nThreads, nThreads) >> > (d_prevMat, d_newMat, d_golKernel, n, CONV_N);
+		//(*kFunc) << <dim3(nBlocks, nBlocks), dim3(nThreads, nThreads) >> > (d_prevMat, d_newMat, d_golKernel, n, CONV_N);
 		cudaDeviceSynchronize();
+		cudaError_t error = cudaGetLastError();
+		if (error != cudaSuccess)
+		{
+			fprintf(stderr, "ERROR: validClassKernel: %s\n", cudaGetErrorString(error));
+		}
 		d_tempPtr = d_prevMat;
 		d_prevMat = d_newMat;
 		d_newMat = d_tempPtr;

@@ -4,6 +4,7 @@
 #include <time.h>
 #include "CUDAExperiment.h"
 
+
 class GoLGPUExperiment : public CUDAExperiment
 {
 private:
