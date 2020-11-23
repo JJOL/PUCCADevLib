@@ -48,13 +48,16 @@
     <ClInclude Include="GoLCCA.cuh">
       <Filter>Source Files\GoL</Filter>
     </ClInclude>
-    <ClInclude Include="puccaGoL.cuh">
-      <Filter>Source Files\PoC</Filter>
-    </ClInclude>
     <ClInclude Include="GoLGPUExperiment.cuh">
       <Filter>Source Files\PoC</Filter>
     </ClInclude>
     <ClInclude Include="puccaEmptyCATemplate.cuh">
+      <Filter>Source Files\PoC</Filter>
+    </ClInclude>
+    <ClInclude Include="sim_app_jpuccagol_JPGoLCA.h">
+      <Filter>Source Files\PoC</Filter>
+    </ClInclude>
+    <ClInclude Include="puccaGoL.h">
       <Filter>Source Files\PoC</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,6 +77,9 @@
     <CudaCompile Include="puccaCloudSim.cuh">
       <Filter>Source Files\PoC</Filter>
     </CudaCompile>
+    <CudaCompile Include="puccaGoL.cu">
+      <Filter>Source Files\PoC</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestSimLab.cpp">
@@ -90,6 +96,9 @@
     </ClCompile>
     <ClCompile Include="CUDACA.cu">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sim_app_jpuccagol_JPGoLCA.cpp">
+      <Filter>Source Files\PoC</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

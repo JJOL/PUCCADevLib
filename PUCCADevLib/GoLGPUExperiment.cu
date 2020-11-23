@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "mat_utils.h"
-#include "puccaGoL.cuh"
+#include "puccaGoL.h"
 
 void GoLGPUExperiment::setParamGridN(int gridN) { grid_n = gridN; }
 void GoLGPUExperiment::setParamStepsN(int stepsN) { steps_n = stepsN; }
@@ -47,12 +47,15 @@ void GoLGPUExperiment::runExperimentInstance()
 	GoLCA::hCAReady();
 	t1 = clock();
 	for (int t = 0; t < steps_n; t++) {
-		GoLCA::hCAStep(t);
+		GoLCA::hCAStep();
 		GoLCA::hCARead();
 		if (printEveryStep && grid_n <= 10) {
 			printf("Iteration Mat:\n");
 			PUCCA::printMat(h_golFinalMat, grid_n);
 		}
+
+		PUCCA::copyMatIntoMat(h_golFinalMat, h_golExtMat, grid_n, grid_n + 2, 0, 0, 1, 1);
+		GoLCA::hCAReady();
 	}
 	GoLCA::hCADone();
 	t2 = clock();

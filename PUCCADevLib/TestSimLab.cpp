@@ -2,7 +2,7 @@
 #include <string>
 //#include "CUDAExperiment.h"
 #include "GoLGPUExperiment.cuh"
-//#include "GoLCPUExperiment.h"
+#include "GoLCPUExperiment.h"
 //#include "GoLCCA.cuh"
 #include "mat_utils.h"
 
@@ -18,17 +18,17 @@ int main()
 	GoLGPUExperiment golExperiment("GPU - Game of Life");
 	printf("Initializing %s...\n", golExperiment.experimentName.c_str());
 	golExperiment.setParamGridN(dimVarFactor*10);
-	golExperiment.setParamStepsN(1);
+	golExperiment.setParamStepsN(5);
 	golExperiment.setParamThreads(16);
 	golExperiment.setParamBlocks(128);
-	golExperiment.setPrintEveryStep(0);
+	golExperiment.setPrintEveryStep(1);
 	golExperiment.initialize();
 	golExperiment.runExperimentInstance();
 
 
 	/*GoLCPUExperiment golCpuExperiment("CPU - Game of Life");
 	printf("Initializing %s...\n", golCpuExperiment.experimentName.c_str());
-	golCpuExperiment.setParamGridN(dimVarFactor * 1000);
+	golCpuExperiment.setParamGridN(dimVarFactor * 4000);
 	golCpuExperiment.setParamStepsN(1000);
 	golCpuExperiment.initialize();
 	golCpuExperiment.runExperimentInstance();
