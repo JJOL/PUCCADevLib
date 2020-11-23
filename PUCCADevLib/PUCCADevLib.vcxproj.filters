@@ -60,6 +60,9 @@
     <ClInclude Include="puccaGoL.h">
       <Filter>Source Files\PoC</Filter>
     </ClInclude>
+    <ClInclude Include="puccaCloudSim.h">
+      <Filter>Source Files\PoC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="GoLCCA.cu">
@@ -74,10 +77,10 @@
     <CudaCompile Include="CloudSimCA.cu">
       <Filter>Source Files\CloudSim</Filter>
     </CudaCompile>
-    <CudaCompile Include="puccaCloudSim.cuh">
+    <CudaCompile Include="puccaGoL.cu">
       <Filter>Source Files\PoC</Filter>
     </CudaCompile>
-    <CudaCompile Include="puccaGoL.cu">
+    <CudaCompile Include="puccaCloudSim.cu">
       <Filter>Source Files\PoC</Filter>
     </CudaCompile>
   </ItemGroup>

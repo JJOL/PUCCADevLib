@@ -4,9 +4,15 @@
 #include <stdio.h>
 #include "puccaGoL.h"
 
+/*
+* Data Variables to hold input and out CA state
+*/
 int* ext_ca_in_data, * ca_out_data;
-int* kernel;
 
+/*
+* Constant Variables that shoould not change
+*/
+int* kernel;
 int gridN, EXT_N;
 
 
@@ -73,14 +79,10 @@ JNIEXPORT jboolean JNICALL Java_sim_app_jpuccagol_JPGoLCA_read
 (JNIEnv* env, jobject javaobject, jintArray jiarr, jint n)
 {
 	jint len = env->GetArrayLength(jiarr);
-	// jint* app_ca_data = env->GetIntArrayElements(jiarr, NULL);
 
 	GoLCA::hCARead();
-	// int i;
-	// for (i = 0; i < gridN*gridN; i++)
-	// 	app_ca_data[i] = ca_out_data[i];
 	env->SetIntArrayRegion(jiarr, 0, gridN * gridN, (jint*)ca_out_data);
-	// env->ReleaseIntArrayElements(jiarr, app_ca_data, 0);
+
 	return true;
 }
 

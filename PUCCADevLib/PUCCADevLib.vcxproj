@@ -212,10 +212,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <CudaCompile Include="CloudSimCA.cu" />
+    <CudaCompile Include="puccaCloudSim.cu" />
     <CudaCompile Include="GoL.cu" />
     <CudaCompile Include="GoLCCA.cu" />
     <CudaCompile Include="GoLGPUExperiment.cu" />
-    <CudaCompile Include="puccaCloudSim.cuh" />
     <CudaCompile Include="puccaGoL.cu" />
   </ItemGroup>
   <ItemGroup>
@@ -226,6 +226,7 @@
     <ClInclude Include="GoLCCA.cuh" />
     <ClInclude Include="GoLCPUExperiment.h" />
     <ClInclude Include="GoLGPUExperiment.cuh" />
+    <ClInclude Include="puccaCloudSim.h" />
     <ClInclude Include="puccaEmptyCATemplate.cuh" />
     <ClInclude Include="mat_utils.h" />
     <ClInclude Include="puccaGoL.h" />
