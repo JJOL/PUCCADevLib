@@ -1,7 +1,7 @@
 #  Parallelized-Units CUDA Cellular Automata (PUCCA Dev Framework)
 v0.3.0
 ---
-A reasearch and development framework for implementing ambicious parallel celullar automata on CUDA and integrating them into external prototypal tools or systems.
+A research and development framework for implementing ambicious parallel celullar automata on CUDA and integrating them into external prototypal tools or systems.
 
 ## Usage
 The project contains a template file with guiding comments for programming a CUDA Cellular Automata and a sample of a Game of Life automaton.
